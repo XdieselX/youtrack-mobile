@@ -2,7 +2,6 @@ import React from 'react';
 import {Text} from 'react-native';
 
 import {shallow} from 'enzyme';
-import toJson from 'enzyme-to-json';
 
 import {Menu} from './menu';
 import Router from '../router/router';
@@ -16,12 +15,6 @@ describe('<Menu/>', () => {
   let instance;
 
   describe('Render', () => {
-
-    it('should match a snapshot', () => {
-      render({auth: {}, agileUserProfile: {}});
-
-      expect(toJson(wrapper)).toMatchSnapshot();
-    });
 
     it('should render component', () => {
       render({auth: {}, agileUserProfile: {}});
