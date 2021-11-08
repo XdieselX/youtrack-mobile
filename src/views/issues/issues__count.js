@@ -23,11 +23,16 @@ const IssuesCount = (props: Props) => {
   return (
     <AnimatedView
       testID= "test:id/issuesCount"
+      accessibilityLabel= "issuesCount"
       accessible={true}
       useNativeDriver
       duration={500}
-      animation="fadeIn">
-      <Text style={styles.issuesCount}>
+      animation="fadeIn"
+      style={styles.toolbarAction}
+    >
+      <Text
+        numberOfLines={1}
+        style={styles.toolbarText}>
         {text}
       </Text>
     </AnimatedView>
