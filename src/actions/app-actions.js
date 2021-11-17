@@ -19,21 +19,21 @@ import UrlParse from 'url-parse';
 import usage from '../components/usage/usage';
 import {CUSTOM_ERROR_MESSAGE, UNSUPPORTED_ERRORS} from '../components/error/error-messages';
 import {EVERYTHING_CONTEXT} from '../components/search/search-context';
-import {getIsAuthorized} from '../reducers/app-reducer';
+
 import {
   clearCachesAndDrafts,
   flushStorage,
   flushStoragePart,
   getOtherAccounts,
   getStorageState,
+  getStoredAuthParams,
   initialState,
   populateStorage,
   storeAccounts,
-  getStoredAuthParams,
 } from '../components/storage/storage';
 import {hasType} from '../components/api/api__resource-types';
 import {isIOSPlatform} from '../util/util';
-import {isUnsupportedFeatureError} from '../components/error/error-resolver';
+import {getErrorMessage, isUnsupportedFeatureError} from '../components/error/error-resolver';
 import {loadConfig} from '../components/config/config';
 import {logEvent} from '../components/log/log-helper';
 import {notify, notifyError} from '../components/notification/notification';
@@ -50,6 +50,7 @@ import type {NotificationRouteData} from '../flow/Notification';
 import type {PermissionCacheItem} from '../flow/Permission';
 import type {StorageState} from '../components/storage/storage';
 import type {WorkTimeSettings} from '../flow/Work';
+import type {RootState} from '../reducers/app-reducer';
 
 type Action = (
   (dispatch: (any) => any, getState: () => AppState, getApi: () => Api) =>
@@ -551,6 +552,10 @@ export function cacheProjects(): ((
   };
 }
 
+function getIsAuthorized(state: RootState): boolean {
+  return !!state.auth?.currentUser;
+}
+
 function subscribeToURL(): Action {
   return async (dispatch: (any) => any, getState: () => AppState, getApi: () => Api) => {
     function isServerConfigured(url: ?string) {
@@ -619,7 +624,7 @@ export function initializeApp(config: AppConfigFilled, issueId: string | null, n
       try {
         await dispatch(initializeAuth(reloadedConfig));
       } catch (e) {
-        Router.LogIn({config});
+        Router.LogIn({config, errorMessage: getErrorMessage(e)});
         return;
       }
     }
